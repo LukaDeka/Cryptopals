@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
-
 #include "functions.h"
 
 void* xmalloc(size_t size) {

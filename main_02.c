@@ -8,6 +8,7 @@
 #define KEY "686974207468652062756c6c277320657965"
 #define ANSWER "746865206b696420646f6e277420706c6179"
 
+// Challenge 2: Fixed XOR
 int main() {
 
     size_t hex_len = strlen(VALUE);

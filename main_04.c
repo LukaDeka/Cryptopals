@@ -7,6 +7,7 @@
 #define ANSWER "Now that the party is jumping\\n"
 #define ANSWER_LEN 29 // without the newline
 
+// Challenge 4: Detect single-character XOR
 int main() {
 
     FILE *file = fopen("challenge_04.txt", "r"); // also try "test_04.txt"
