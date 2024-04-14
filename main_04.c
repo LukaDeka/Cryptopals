@@ -4,7 +4,8 @@
 #include "functions.h"
 
 #define MAX_LEN 60 // every string (except one) is 60 chars
-#define ANSWER "Now that the party is jumping\\n"
+
+#define ANSWER "Now that the party is jumping\\n" // answer contains newline
 #define ANSWER_LEN 29 // without the newline
 
 // Challenge 4: Detect single-character XOR

@@ -32,7 +32,7 @@ uint8_t hex_char_to_binary(char input) {
         case 'D': case 'd': return 0b1101;
         case 'E': case 'e': return 0b1110;
         case 'F': case 'f': return 0b1111;
-        default: fprintf(stderr, "Error: Invalid input '%c' (%d) type for hex_char_to_binary.\n", input, input);
+        default: fprintf(stderr, "Error: Invalid input '%c' (%d) for hex_char_to_binary.\n", input, input);
         return 0b0000;
     } 
 }
@@ -154,7 +154,7 @@ uint8_t* single_xor(uint8_t* byte_arr, uint8_t c, size_t byte_amount) {
 // lower score is better
 double score_plaintext(uint8_t* input, size_t input_len) {
 
-    // if (input == NULL) { return -1; }
+    if (input == NULL) { return HUGE_VAL; }
 
     FILE* fp = fopen("ascii_frequencies.txt", "r");
 
@@ -174,7 +174,6 @@ double score_plaintext(uint8_t* input, size_t input_len) {
 
     free(buffer);
     fclose(fp);
-
 
     // count occurrences of each byte
     int count_array[256] = {0};

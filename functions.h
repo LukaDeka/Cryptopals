@@ -33,7 +33,7 @@ static inline void print_xor(char* message, uint8_t* string, size_t input_len) {
         if (ch >= ' ' && ch <= '~') // ascii char in printable range
             printf("%c", string[i]);
         else if (ch == '\n') // answer contains newline
-            printf("\\n");
+            printf(BOLDWHITE "\\n" RESET);
         else 
             printf("� ");
     }
@@ -51,14 +51,16 @@ static inline void print_score(char* message, double score) {
     printf("%s%.2f\n", message, score);
 }
 
-
 // malloc that exits on failure
 void* xmalloc(size_t size);
 
 // converts hex string into byte array
 uint8_t* hex_to_binary(char* input, size_t input_len);
+
 char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount);
+
 char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount);
+
 char* hex_to_base64(char* input, size_t input_len);
 
 // returns the XOR of two byte arrays
@@ -76,7 +78,5 @@ double score_plaintext(uint8_t* input, size_t input_len);
 // finds three most likely guesses for encrypted hexadecimal strings
 // returns the key (char) of first_choice
 uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** first_choice, uint8_t** second_choice, uint8_t** third_choice);
-
-
 
 #endif
