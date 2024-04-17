@@ -61,6 +61,8 @@ char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount);
 
 char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount);
 
+// uint8_t* base64_to_binary(char* input, size_t input_len);
+
 char* hex_to_base64(char* input, size_t input_len);
 
 // returns the XOR of two byte arrays
@@ -75,8 +77,12 @@ uint8_t* single_xor(uint8_t* byte_arr, uint8_t c, size_t byte_amount);
 // returns chi squared score of byte array (lower score is better)
 double score_plaintext(uint8_t* input, size_t input_len);
 
-// finds three most likely guesses for encrypted hexadecimal strings
-// returns the key (char) of first_choice
-uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** first_choice, uint8_t** second_choice, uint8_t** third_choice);
+// finds the best guess for encrypted byte array
+// returns the key (char) of best_guess
+uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** best_guess);
+
+// computes the hamming (edit) distance between two strings
+// called using pointer arithmetic
+size_t hamming_distance(uint8_t* str_1, uint8_t* str2, size_t byte_amount);
 
 #endif

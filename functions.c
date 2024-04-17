@@ -114,6 +114,11 @@ char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount) {
     return base64;
 }
 
+// uint8_t* base64_to_binary(char* input, size_t input_len) {
+//     const char base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+//     size_t base64_i = 0, bytes_i = 0;
+// }
+
 char* hex_to_base64(char* input, size_t input_len) {
 
     // convert hex into binary
@@ -146,15 +151,19 @@ uint8_t* multi_xor(uint8_t* byte_arr1, uint8_t* byte_arr2, size_t arr1_byte_amou
 // returns the XOR of a byte array with a single character
 uint8_t* single_xor(uint8_t* byte_arr, uint8_t c, size_t byte_amount) {
 
-    uint8_t key_str[2] = {c, '\0'}; // transform char into string for repeating_key_xor()
+    uint8_t* xor = xmalloc(byte_amount * sizeof(uint8_t));
 
-    return multi_xor(byte_arr, key_str, byte_amount, 1);
+    for (size_t i = 0; i < byte_amount; i++) {
+        xor[i] = byte_arr[i] ^ c;
+    }
+
+    return xor;
 }
 
 // lower score is better
 double score_plaintext(uint8_t* input, size_t input_len) {
 
-    if (input == NULL) { return HUGE_VAL; }
+    if (input == NULL) { return INFINITY; }
 
     FILE* fp = fopen("ascii_frequencies.txt", "r");
 
@@ -177,13 +186,13 @@ double score_plaintext(uint8_t* input, size_t input_len) {
 
     // count occurrences of each byte
     int count_array[256] = {0};
-    for (int i = 0; i < input_len; i++ ) {
+    for (size_t i = 0; i < input_len; i++ ) {
         count_array[input[i]]++;
     }
 
     // compute chi-squared
     double final_score = 0.0;
-    for (int i = 0; i < 256; i++) {
+    for (size_t i = 0; i < 256; i++) {
 
         if (count_array[i] == 0 || ascii_frequencies[i] == 0) { continue; } // skip zeroes and non-printable characters
 
@@ -191,7 +200,7 @@ double score_plaintext(uint8_t* input, size_t input_len) {
         final_score += (difference * difference) / ascii_frequencies[i];
     }
 
-    for (int i = 0; i < 256; i++) { // penalty for each non-printable character
+    for (size_t i = 0; i < 256; i++) { // penalty for each non-printable character
         if (ascii_frequencies[i] == 0 && count_array[i] != 0) {
             final_score += count_array[i] * 2; // 2 is an arbitrary value
         }
@@ -203,37 +212,43 @@ double score_plaintext(uint8_t* input, size_t input_len) {
     return final_score;
 }
 
-uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** first_choice, uint8_t** second_choice, uint8_t** third_choice) {
+uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** best_guess) {
 
-    // generate random key choices as placeholders
-    *first_choice =  single_xor(byte_arr, 'a', byte_amount);
-    *second_choice = single_xor(byte_arr, 'b', byte_amount);
-    *third_choice =  single_xor(byte_arr, 'c', byte_amount);
+    // generate placeholder xor
+    *best_guess = single_xor(byte_arr, 'a', byte_amount);
+    uint8_t best_guess_key = 'a';
 
-    uint8_t first_guess_key = 'a';
     for (uint8_t key = ' '; key <= '~'; key++) { // key is a printable char
 
         uint8_t* current_xor = single_xor(byte_arr, key, byte_amount);
 
-        double current_score =  score_plaintext(current_xor, byte_amount);
-        double first_score =    score_plaintext(*first_choice, byte_amount);
-        double second_score =   score_plaintext(*second_choice, byte_amount);
-        double third_score =    score_plaintext(*third_choice, byte_amount);
+        double current_score = score_plaintext(current_xor, byte_amount);
+        double first_score   = score_plaintext(*best_guess, byte_amount);
 
         // update the scores
         if (current_score < first_score) {
-            first_guess_key = key;
-            strncpy((char*) *third_choice,   (char*) *second_choice, byte_amount);
-            strncpy((char*) *second_choice,  (char*) *first_choice, byte_amount);
-            strncpy((char*) *first_choice,   (char*) current_xor, byte_amount);
-        } else if (current_score < second_score) {
-            strncpy((char*) *third_choice,   (char*) *second_choice, byte_amount);
-            strncpy((char*) *second_choice,  (char*) current_xor, byte_amount);
-        } else if (current_score < third_score) {
-            strncpy((char*) *third_choice,   (char*) current_xor, byte_amount);
+            best_guess_key = key;
+            strncpy((char*)*best_guess, (char*)current_xor, byte_amount);
         }
 
         free(current_xor);
     }
-    return first_guess_key;
+    return best_guess_key;
 }
+
+// pass byte arrays using pointer arithmetic
+size_t hamming_distance(uint8_t* str_1, uint8_t* str2, size_t byte_amount) {
+    size_t ret = 0;
+    for (size_t byte_num = 0; byte_num < byte_amount; byte_num++) {
+
+        uint8_t byte_1 = str_1[byte_num], byte_2 = str2[byte_num]; // fetch bytes
+
+        for (int i = 0; i < 8; i++) { // iterate over bits
+            if ((byte_1 & 0x1) != (byte_2 & 0x1)) { ret++; }
+            byte_1 = byte_1 >> 1;
+            byte_2 = byte_2 >> 1;
+        }
+    }
+    return ret;
+}
+
