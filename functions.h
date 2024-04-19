@@ -32,8 +32,10 @@ static inline void print_xor(char* message, uint8_t* string, size_t input_len) {
         char ch = string[i];
         if (ch >= ' ' && ch <= '~') // ascii char in printable range
             printf("%c", string[i]);
-        else if (ch == '\n') // answer contains newline
+        else if (ch == '\n') // answer in main_04 contains newline
             printf(BOLDWHITE "\\n" RESET);
+        else if (ch == '\t')
+            printf(BOLDWHITE "\\t" RESET);
         else 
             printf("� ");
     }
@@ -61,7 +63,7 @@ char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount);
 
 char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount);
 
-// uint8_t* base64_to_binary(char* input, size_t input_len);
+uint8_t* base64_to_binary(char* input, size_t input_len);
 
 char* hex_to_base64(char* input, size_t input_len);
 
@@ -83,6 +85,13 @@ uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** best_g
 
 // computes the hamming (edit) distance between two strings
 // called using pointer arithmetic
-size_t hamming_distance(uint8_t* str_1, uint8_t* str2, size_t byte_amount);
+size_t hamming_distance(uint8_t* str1, uint8_t* str2, size_t byte_amount);
+
+// predicts the keysize of repeating-key xor encrypted files
+size_t guess_keysize(uint8_t* byte_arr, size_t byte_amount, size_t keysize_min, size_t keysize_max);
+
+// break repeating-key xor encrypted files
+// returns key of ciphertext
+uint8_t* break_vigenere(uint8_t* ciphertext, size_t text_len, size_t min_keysize, size_t max_keysize);
 
 #endif

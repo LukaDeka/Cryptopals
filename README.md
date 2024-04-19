@@ -16,9 +16,10 @@ My language of choice is C, since I wanted to implement low-level storage mechan
     
 5.  **Implement repeating-key XOR**: Encrypt a plaintext message using repeating-key XOR encryption with a given key.
 
+6.  **Break repeating-key XOR (vigenere)**: Decrypt a ciphertext encrypted with a repeating-key XOR cipher using the Vigenere cipher.
+
 ## Personal Modifications:
 
-1.  **Enhanced XOR-Cracking Algorithm**: Modified the algorithm for challenges 3 and 4 to output the three most probable decryption guesses, along with their respective scores and keys. **(FEATURE REMOVED IN FAVOR OF PERFORMANCE)**
+1.  **Enhanced Single-XOR Cracking Algorithm**: Modified the algorithm for challenges 3 and 4 to output the three most probable decryption guesses, along with their respective scores and keys. **(FEATURE REMOVED IN FAVOR OF PERFORMANCE)**
  
-2.  **Improved Scoring System**: Implemented a chi-squared algorithm that penalizes non-printable characters and shorter plaintext lengths, enhancing the accuracy of decryption results in challenges 3 and 4.
-
+2.  **Improved Scoring System**: Implemented a chi-squared algorithm that penalizes non-printable characters and shorter plaintext lengths, enhancing the accuracy of decryption results in challenges 3, 4 and 6.
