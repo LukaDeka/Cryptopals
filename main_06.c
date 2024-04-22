@@ -1,4 +1,3 @@
-#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,6 +16,7 @@ int main() {
 
     FILE* fp = fopen("challenge_06.txt", "r");
     
+    // TODO: turn reading from file to buffer into a function
     // get file size
     fseek(fp, 0, SEEK_END);
     long file_size = ftell(fp);
@@ -31,22 +31,24 @@ int main() {
             base64_buffer[i++] = ch;
         }
     }
-    base64_buffer[i] = '\0';
+    base64_buffer[i++] = '\0';
     fclose(fp);
 
-    size_t base64_len = strnlen(base64_buffer, file_size);
-    uint8_t* byte_arr = base64_to_binary(base64_buffer, base64_len);
+    // size_t base64_len = i;
+    uint8_t* ciphertext = base64_to_binary(base64_buffer, i-1);
     free(base64_buffer);
 
-    size_t byte_amount = base64_len * 3.0f / 4;
-    uint8_t* key = break_vigenere(byte_arr, byte_amount, MIN_KEYSIZE, MAX_KEYSIZE);
-    uint8_t* plaintext = multi_xor(byte_arr, key, byte_amount, strlen((char*)key));
+    size_t byte_amount = i * 3.0f / 4;
+    uint8_t* key = break_vigenere(ciphertext, byte_amount, MIN_KEYSIZE, MAX_KEYSIZE);
+    uint8_t* plaintext = multi_xor(ciphertext, key, byte_amount, strlen((char*)key));
 
     // uint8_t* again_encrypted = multi_xor(plaintext, key, byte_amount, 29);      // TODO: fix padding byte issue
     // char* based = binary_to_base64(again_encrypted, byte_amount);
     // puts(based);
+    // free(based); free(again_encrypted);
 
-    // TODO: rename encrypted_text to ciphertext, byte_arr to plaintext
+    // char* hex_encrypted = binary_to_hex(ciphertext, byte_amount);
+    // puts(hex_encrypted);
 
     puts("");
     print_str("Plaintext:\n", (char*)plaintext);
@@ -58,6 +60,6 @@ int main() {
         printf(RED "Failure!\n\n" RESET);
     }
 
-    free(byte_arr); free(key); free(plaintext); // TODO: fix memory leaks
+    free(ciphertext); free(key); free(plaintext);
     return 0;
 }

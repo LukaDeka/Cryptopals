@@ -59,7 +59,7 @@ char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount) {
     const char hexmap[] = "0123456789abcdef";
     size_t hex_i = 0, byte_i = 0;
 
-    char* hex = xmalloc(byte_amount * 2 * sizeof(char));
+    char* hex = xmalloc((byte_amount * 2 + 1) * sizeof(char));
 
     while (byte_i < byte_amount) {
         hex[hex_i++] = hexmap[(byte_arr[byte_i] & 0b11110000) >> 4];
@@ -114,10 +114,9 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
     size_t padding_byte_amount = 0;
     if (input[input_len - 1] == '=') { padding_byte_amount++; }
     if (input[input_len - 2] == '=') { padding_byte_amount++; }
-    if (input[input_len - 3] == '=') { padding_byte_amount++; }
     input_len -= padding_byte_amount; // discard padding bytes
 
-    uint8_t* byte_arr = xmalloc((input_len * 3.0f / 4 + 1) * sizeof(uint8_t));
+    uint8_t* byte_arr = xmalloc((input_len * 3.0f / 4 + 3) * sizeof(uint8_t));
 
     size_t base64_i = 0, bytes_i = 0;
     while (base64_i <= input_len - 3) {
@@ -131,9 +130,8 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
         byte_arr[bytes_i++] = ((b3 & 0b000011) << 6 | b4);
     }
 
-
     // account for missing bytes/padding
-    if (padding_byte_amount == 3) {
+    if (padding_byte_amount == 1) {
         char c1 = input[base64_i++], c2 = input[base64_i++], c3 = input[base64_i++];
         uint8_t b1 = strchr(base64map, c1) - base64map;
         uint8_t b2 = strchr(base64map, c2) - base64map;
@@ -147,10 +145,6 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
         uint8_t b2 = strchr(base64map, c2) - base64map;
         byte_arr[bytes_i++] = (b1 << 2 | b2 >> 4);
         byte_arr[bytes_i++] = ((b2 & 0b001111) << 4);
-    } else if (padding_byte_amount == 1) {
-        char c1 = input[base64_i++];
-        uint8_t b1 = strchr(base64map, c1) - base64map;
-        byte_arr[bytes_i++] = (b1 << 2);
     }
 
     byte_arr[bytes_i] = '\0';
@@ -281,7 +275,6 @@ size_t hamming_distance(uint8_t* str1, uint8_t* str2, size_t byte_amount) {
     for (size_t byte_num = 0; byte_num < byte_amount; byte_num++) {
 
         uint8_t byte1 = str1[byte_num], byte2 = str2[byte_num]; // fetch bytes
-
         for (int i = 0; i < 8; i++) { // iterate over bits
             if ((byte1 & 0x1) != (byte2 & 0x1)) { ret++; }
             byte1 = byte1 >> 1;
@@ -347,6 +340,7 @@ uint8_t* break_vigenere(uint8_t* ciphertext, size_t text_len, size_t min_keysize
     for (size_t i = 0; i < keysize; i++) {
         uint8_t* decrypted_block; // placeholder
         key_string[i] = crack_single_xor(blocks[i], block_amount, &decrypted_block);
+        free(decrypted_block);
     }
     key_string[keysize] = '\0';
 
