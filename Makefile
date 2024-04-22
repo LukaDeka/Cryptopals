@@ -15,3 +15,6 @@ main_05: main_05.c functions.c functions.h
 
 main_06: main_06.c functions.c functions.h
 	clang main_06.c functions.c -o bin/main_06 -Wall -lm
+
+main_07: main_07.c functions.c functions.h
+	clang main_07.c functions.c -o bin/main_07 -Wall -lm -lcrypto
