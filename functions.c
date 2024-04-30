@@ -116,8 +116,13 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
     if (input[input_len - 2] == '=') { padding_byte_amount++; }
     input_len -= padding_byte_amount; // discard padding bytes
 
-    uint8_t* byte_arr = xmalloc((input_len * 3.0f / 4 + 3) * sizeof(uint8_t));
+    uint8_t* byte_arr = xmalloc((input_len * 3 / 4 + 10) * sizeof(uint8_t));
 
+    /*  Base64 to binary conversion:
+        | c1 | | c2 | | c3 | | c4 |
+        123456 123456 123456 123456
+        | byte1 || byte2 || byte3 |
+    */
     size_t base64_i = 0, bytes_i = 0;
     while (base64_i <= input_len - 3) {
         char c1 = input[base64_i++], c2 = input[base64_i++], c3 = input[base64_i++], c4 = input[base64_i++];
@@ -138,13 +143,12 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
         uint8_t b3 = strchr(base64map, c3) - base64map;
         byte_arr[bytes_i++] = (b1 << 2 | b2 >> 4);
         byte_arr[bytes_i++] = ((b2 & 0b001111) << 4 | b3 >> 2);
-        byte_arr[bytes_i++] = ((b3 & 0b000011) << 6);
+
     } else if (padding_byte_amount == 2) {
         char c1 = input[base64_i++], c2 = input[base64_i++];
         uint8_t b1 = strchr(base64map, c1) - base64map;
         uint8_t b2 = strchr(base64map, c2) - base64map;
         byte_arr[bytes_i++] = (b1 << 2 | b2 >> 4);
-        byte_arr[bytes_i++] = ((b2 & 0b001111) << 4);
     }
 
     byte_arr[bytes_i] = '\0';

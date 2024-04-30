@@ -31,27 +31,20 @@ int main() {
             base64_buffer[i++] = ch;
         }
     }
-    base64_buffer[i++] = '\0';
+    base64_buffer[i] = '\0';
     fclose(fp);
 
-    // size_t base64_len = i;
-    uint8_t* ciphertext = base64_to_binary(base64_buffer, i-1);
+    uint8_t* ciphertext = base64_to_binary(base64_buffer, i);
     free(base64_buffer);
 
-    size_t byte_amount = i * 3.0f / 4;
+    size_t byte_amount = i * 3.0f / 4 - 1;
     uint8_t* key = break_vigenere(ciphertext, byte_amount, MIN_KEYSIZE, MAX_KEYSIZE);
     uint8_t* plaintext = multi_xor(ciphertext, key, byte_amount, strlen((char*)key));
 
-    // uint8_t* again_encrypted = multi_xor(plaintext, key, byte_amount, 29);      // TODO: fix padding byte issue
-    // char* based = binary_to_base64(again_encrypted, byte_amount);
-    // puts(based);
-    // free(based); free(again_encrypted);
-
-    // char* hex_encrypted = binary_to_hex(ciphertext, byte_amount);
-    // puts(hex_encrypted);
-
+    char print_buffer[byte_amount];
+    snprintf(print_buffer, byte_amount, "%s", plaintext);
     puts("");
-    print_str("Plaintext:\n", (char*)plaintext);
+    print_str("Plaintext:\n", print_buffer);
     print_str("Key: ", (char*)key);
 
     if (strncmp((char*)key, ANSWER_KEY, strlen(ANSWER_KEY)) == 0) {
