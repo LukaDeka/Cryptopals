@@ -7,7 +7,6 @@
 
 // Challenge 5: Implement repeating-key XOR
 int main() {
-
     size_t input_size = strlen(INPUT);
     size_t key_size = strlen(KEY);
 
@@ -16,8 +15,7 @@ int main() {
     char* encrypted_hex = binary_to_hex(xor, input_size);
 
     // print results
-    puts("");
-    print_str("Plaintext:\n", INPUT);
+    print_str("\nPlaintext:\n   ", INPUT);
     print_str("Key:             ", KEY);
     print_str("Encrypted:       ", encrypted_hex);
     print_str("Expected:        ", ANSWER);
@@ -29,6 +27,5 @@ int main() {
     }
 
     free(xor); free(encrypted_hex);
-
     return 0;
 }

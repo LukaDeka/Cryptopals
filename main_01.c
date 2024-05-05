@@ -7,7 +7,6 @@
 
 // Challenge 1: Convert hex to base64
 int main() {
-
     char* converted_base64 = hex_to_base64(INPUT, strlen(INPUT));
     
     puts("");
@@ -22,6 +21,5 @@ int main() {
     }
 
     free(converted_base64);
-
     return 0;
 }

@@ -8,7 +8,7 @@
 void* xmalloc(size_t size) {
     if (size == 0){
         fprintf(stderr, "Failed to allocate %zu bytes.\n", size);
-        exit(-1);
+        exit(1);
     }
     return malloc(size);
 }
@@ -38,7 +38,6 @@ uint8_t hex_char_to_binary(char input) {
 }
 
 uint8_t* hex_to_binary(char* input, size_t input_len) {
-
     uint8_t* byte_arr = xmalloc((input_len / 2 + 1) * sizeof(uint8_t));
     size_t in_i = 0, bytes_i = 0;
 
@@ -55,7 +54,6 @@ uint8_t* hex_to_binary(char* input, size_t input_len) {
 }
 
 char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount) {
-
     const char hexmap[] = "0123456789abcdef";
     size_t hex_i = 0, byte_i = 0;
 
@@ -71,7 +69,6 @@ char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount) {
 }
 
 char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount) {
-
     const char base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     size_t base64_i = 0, bytes_i = 0;
 
@@ -157,7 +154,6 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
 }
 
 char* hex_to_base64(char* input, size_t input_len) {
-
     // convert hex into binary
     uint8_t* byte_arr = hex_to_binary(input, input_len);
 
@@ -171,7 +167,6 @@ char* hex_to_base64(char* input, size_t input_len) {
 
 // returns the XOR of two byte arrays, repeating the second if necessary
 uint8_t* multi_xor(uint8_t* byte_arr1, uint8_t* byte_arr2, size_t arr1_byte_amount, size_t arr2_byte_amount) {
-
     int arr1_i = 0, arr2_i = 0;
     uint8_t* xor = xmalloc(arr1_byte_amount * sizeof(uint8_t));
 
@@ -187,36 +182,28 @@ uint8_t* multi_xor(uint8_t* byte_arr1, uint8_t* byte_arr2, size_t arr1_byte_amou
 
 // returns the XOR of a byte array with a single character
 uint8_t* single_xor(uint8_t* byte_arr, uint8_t c, size_t byte_amount) {
-
     uint8_t* xor = xmalloc(byte_amount * sizeof(uint8_t));
     for (size_t i = 0; i < byte_amount; i++) {
         xor[i] = byte_arr[i] ^ c;
     }
-
     return xor;
 }
 
 // lower score is better
 double score_plaintext(uint8_t* input, size_t input_len) {
-
     if (input == NULL) { return INFINITY; }
-
     FILE* fp = fopen("ascii_frequencies.txt", "r");
 
     double ascii_frequencies[256] = {0};
-
     size_t buffer_len = 32;
     char* buffer = malloc(buffer_len * sizeof(char));
 
     // load frequencies from file
     while (fgets(buffer, buffer_len, fp) != NULL) {
-
         int index; double value;
         sscanf(buffer, "%d:%lf", &index, &value );
-
         ascii_frequencies[index] = value;
     }
-
     free(buffer);
     fclose(fp);
 
@@ -229,9 +216,7 @@ double score_plaintext(uint8_t* input, size_t input_len) {
     // compute chi-squared
     double final_score = 0.0;
     for (size_t i = 0; i < 256; i++) {
-
         if (count_array[i] == 0 || ascii_frequencies[i] == 0) { continue; } // skip zeroes and non-printable chars
-
         double difference = (double)count_array[i] / input_len - ascii_frequencies[i];
         final_score += (difference * difference) / ascii_frequencies[i];
     }
@@ -251,13 +236,11 @@ double score_plaintext(uint8_t* input, size_t input_len) {
 }
 
 uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** best_guess) {
-
     // generate placeholder xor
     *best_guess = single_xor(byte_arr, 'a', byte_amount);
     uint8_t best_guess_key = 'a';
 
     for (uint8_t key = ' '; key <= '~'; key++) { // key is a printable char
-
         uint8_t* current_xor = single_xor(byte_arr, key, byte_amount);
         double current_score = score_plaintext(current_xor, byte_amount);
         double first_score   = score_plaintext(*best_guess, byte_amount);
@@ -277,7 +260,6 @@ uint8_t crack_single_xor(uint8_t* byte_arr, size_t byte_amount, uint8_t** best_g
 size_t hamming_distance(uint8_t* str1, uint8_t* str2, size_t byte_amount) {
     size_t ret = 0;
     for (size_t byte_num = 0; byte_num < byte_amount; byte_num++) {
-
         uint8_t byte1 = str1[byte_num], byte2 = str2[byte_num]; // fetch bytes
         for (int i = 0; i < 8; i++) { // iterate over bits
             if ((byte1 & 0x1) != (byte2 & 0x1)) { ret++; }
@@ -293,7 +275,6 @@ size_t guess_keysize(uint8_t* byte_arr, size_t byte_amount, size_t min_keysize, 
     float best_keysize_score = INFINITY; // placeholder value
 
     for (size_t keysize = min_keysize; keysize <= max_keysize && keysize <= byte_amount; keysize++) {
-        
         float curr_score = 0.0;
         size_t i = 0;
         while (i < byte_amount / keysize - 1) { // split byte array into blocks of keysize and compute hamming distance
@@ -314,7 +295,6 @@ size_t guess_keysize(uint8_t* byte_arr, size_t byte_amount, size_t min_keysize, 
 // break repeating-key XOR (vigenere cipher)
 // returns key
 uint8_t* break_vigenere(uint8_t* ciphertext, size_t text_len, size_t min_keysize, size_t max_keysize) {
-
     size_t keysize = guess_keysize(ciphertext, text_len, min_keysize, max_keysize);
 
     // split the ciphertext into blocks of keysize length, like:

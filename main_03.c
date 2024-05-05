@@ -7,20 +7,18 @@
 
 // Challenge 3: Single-byte XOR cipher
 int main() {
-
     // convert hex string to byte array
     size_t hex_len = strlen(INPUT);
     size_t plaintext_len = hex_len / 2;
     uint8_t* byte_arr = hex_to_binary(INPUT, hex_len);
 
-    uint8_t* best_guess = NULL;
+    uint8_t* best_guess;
     uint8_t guess_key = crack_single_xor(byte_arr, plaintext_len, &best_guess);
     
     double guess_score = score_plaintext(best_guess, plaintext_len);
 
     // print results
-    puts("");
-    print_str   ("Encoded hex:      ", INPUT);
+    print_str   ("\nEncoded hex:      ", INPUT);
     print_xor   ("Best guess:       ", best_guess, plaintext_len);
     print_score ("  With score:     ", guess_score);
     printf      ("  With key:       '%c'\n", guess_key);
@@ -33,6 +31,5 @@ int main() {
     }
 
     free(best_guess); free(byte_arr);
-
     return 0;
 }

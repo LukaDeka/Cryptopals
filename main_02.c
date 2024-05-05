@@ -10,8 +10,6 @@
 
 // Challenge 2: Fixed XOR
 int main() {
-
-
     // convert hex to binary
     size_t hex_len = strlen(VALUE);
     size_t byte_amount = ceil(hex_len * 1.0f / 2);
@@ -25,10 +23,9 @@ int main() {
     char* converted_xor = binary_to_hex(xor, byte_amount);
 
     // print results
-    puts("");
-    print_str("Value:       ", VALUE);
-    print_str("Converted:   ", converted_xor);
-    print_str("Expected:    ", ANSWER);
+    print_str("\nValue:       ", VALUE);
+    print_str("Converted:   ",   converted_xor);
+    print_str("Expected:    ",   ANSWER);
 
     if (strncmp(converted_xor, ANSWER, strlen(ANSWER)) == 0) {
         printf(GREEN "Success!\n\n" RESET);
@@ -37,6 +34,5 @@ int main() {
     }
 
     free(byte_value); free(byte_key); free(xor); free(converted_xor);
-
     return 0;
 }

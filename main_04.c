@@ -9,7 +9,6 @@
 
 // Challenge 4: Detect single-character XOR
 int main() {
-
     FILE *file = fopen("challenge_04.txt", "r"); // also try "challenge_04_test.txt"
 
     uint8_t best_guess[MAX_LEN + 1];
@@ -18,8 +17,7 @@ int main() {
     size_t  guess_hex_len = 0;
     size_t  guess_line_num = -1, curr_line_num = 1;
 
-    for (;;) {
-
+    while (1) {
         // convert newline-terminated line into null-terminated string
         char* curr_hex = NULL;
         size_t buffer_len = MAX_LEN + 1;
@@ -56,8 +54,7 @@ int main() {
     fclose(file);
 
     // print results
-    puts("");
-    print_xor   ("Best guess:       ",          best_guess, guess_hex_len / 2);
+    print_xor   ("\nBest guess:       ",        best_guess, guess_hex_len / 2);
     print_score ("  With score:     ",          guess_score);
     printf      ("  With key:       '%c'\n",    guess_key);
     printf      ("  On line:        %zu\n",     guess_line_num);
