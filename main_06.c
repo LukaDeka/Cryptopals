@@ -3,26 +3,21 @@
 #include <string.h>
 #include "functions.h"
 
-#define MIN_KEYSIZE 2 // taken from the challenge description
-#define MAX_KEYSIZE 40 // taken from the challenge description
+// values taken from the challenge description
+#define MIN_KEYSIZE 2
+#define MAX_KEYSIZE 40
 
+// only applicable for challenge_06.txt, obviously
 #define ANSWER_KEY "Terminator X: Bring the noise"
 
+// challenge 6: Break repeating-key XOR
 int main() {
-    // uint8_t test1[] = "this is a test";
-    // uint8_t test2[] = "wokka wokka!!!";
-    // size_t testout = hamming_distance(test1, test2, 14);
-    // printf("The test hamming distance is: %zu\n", testout);
-
-    FILE* fp = fopen("challenge_06.txt", "r");
+    FILE* fp = fopen("challenge_06.txt", "r"); // also try "challenge_06_test.txt"
     
-    // TODO: turn reading from file to buffer into a function
-    // get file size
     fseek(fp, 0, SEEK_END);
     long file_size = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    // read the base64 string
     char* base64_buffer = xmalloc(file_size * sizeof(char));
     int ch;
     size_t i = 0;
@@ -41,10 +36,10 @@ int main() {
     uint8_t* key = break_vigenere(ciphertext, byte_amount, MIN_KEYSIZE, MAX_KEYSIZE);
     uint8_t* plaintext = multi_xor(ciphertext, key, byte_amount, strlen((char*)key));
 
+    // print the text correctly
     char print_buffer[byte_amount];
     snprintf(print_buffer, byte_amount, "%s", plaintext);
-    puts("");
-    print_str("Plaintext:\n", print_buffer);
+    print_str("\nPlaintext:\n", print_buffer);
     print_str("Key: ", (char*)key);
 
     if (strncmp((char*)key, ANSWER_KEY, strlen(ANSWER_KEY)) == 0) {
