@@ -14,46 +14,33 @@ void* xmalloc(size_t size) {
 }
 
 // converts hex characters into binary representation
-uint8_t hex_char_to_binary(char input) {
-    switch (input) {
-        case '0': return 0b0000;
-        case '1': return 0b0001;
-        case '2': return 0b0010;
-        case '3': return 0b0011;
-        case '4': return 0b0100;
-        case '5': return 0b0101;
-        case '6': return 0b0110;
-        case '7': return 0b0111;
-        case '8': return 0b1000;
-        case '9': return 0b1001;
-        case 'A': case 'a': return 0b1010;
-        case 'B': case 'b': return 0b1011;
-        case 'C': case 'c': return 0b1100;
-        case 'D': case 'd': return 0b1101;
-        case 'E': case 'e': return 0b1110;
-        case 'F': case 'f': return 0b1111;
-        default: fprintf(stderr, "Error: Invalid input '%c' (%d) for hex_char_to_binary.\n", input, input);
-        return 0b0000;
+uint8_t hexchar2bin(char ch) {
+    switch (ch) {
+        case '0' ... '9': return ch - '0';
+        case 'a' ... 'f': return ch - 'a' + 10;
+        case 'A' ... 'F': return ch - 'A' + 10;
+        default: fprintf(stderr, "Error: Invalid input '%c' (%d) for hex_char_to_binary.\n", ch, ch);
+        return 0;
     } 
 }
 
-uint8_t* hex_to_binary(char* input, size_t input_len) {
-    uint8_t* byte_arr = xmalloc((input_len / 2 + 1) * sizeof(uint8_t));
+uint8_t* hex2bin(char* hex, size_t hex_len) {
+    uint8_t* byte_arr = xmalloc((hex_len / 2 + 1) * sizeof(uint8_t));
     size_t in_i = 0, bytes_i = 0;
 
-    if (input_len % 2 == 1) { // odd length, save "0b0000 + the rest"
-        byte_arr[bytes_i++] = hex_char_to_binary(input[in_i++]);
+    if (hex_len % 2 == 1) { // odd length, save "0b0000 + the rest"
+        byte_arr[bytes_i++] = hexchar2bin(hex[in_i++]);
     }
 
-    while (in_i < input_len - 1) {
-        byte_arr[bytes_i++] = (hex_char_to_binary(input[in_i] ) << 4) | (hex_char_to_binary(input[in_i+1]));
+    while (in_i < hex_len - 1) {
+        byte_arr[bytes_i++] = (hexchar2bin(hex[in_i] ) << 4) | (hexchar2bin(hex[in_i+1]));
         in_i += 2;
     }
 
     return byte_arr;
 }
 
-char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount) {
+char* bin2hex(uint8_t* byte_arr, size_t byte_amount) {
     const char hexmap[] = "0123456789abcdef";
     size_t hex_i = 0, byte_i = 0;
 
@@ -68,7 +55,7 @@ char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount) {
     return hex;
 }
 
-char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount) {
+char* bin_to_base64(uint8_t* byte_arr, size_t byte_amount) {
     const char base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     size_t base64_i = 0, bytes_i = 0;
 
@@ -104,7 +91,7 @@ char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount) {
     return base64;
 }
 
-uint8_t* base64_to_binary(char* input, size_t input_len) {
+uint8_t* base64_to_bin(char* input, size_t input_len) {
     const char base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     // check last characters for padding bytes
@@ -155,10 +142,10 @@ uint8_t* base64_to_binary(char* input, size_t input_len) {
 
 char* hex_to_base64(char* input, size_t input_len) {
     // convert hex into binary
-    uint8_t* byte_arr = hex_to_binary(input, input_len);
+    uint8_t* byte_arr = hex2bin(input, input_len);
 
     // convert binary to base64
-    char* base64 = binary_to_base64(byte_arr, input_len / 2); 
+    char* base64 = bin_to_base64(byte_arr, input_len / 2); 
 
     free(byte_arr);
 
@@ -167,7 +154,7 @@ char* hex_to_base64(char* input, size_t input_len) {
 
 // returns the XOR of two byte arrays, repeating the second if necessary
 uint8_t* multi_xor(uint8_t* byte_arr1, uint8_t* byte_arr2, size_t arr1_byte_amount, size_t arr2_byte_amount) {
-    int arr1_i = 0, arr2_i = 0;
+    size_t arr1_i = 0, arr2_i = 0;
     uint8_t* xor = xmalloc(arr1_byte_amount * sizeof(uint8_t));
 
     while (arr1_i < arr1_byte_amount) {
@@ -192,7 +179,7 @@ uint8_t* single_xor(uint8_t* byte_arr, uint8_t c, size_t byte_amount) {
 // lower score is better
 double score_plaintext(uint8_t* input, size_t input_len) {
     if (input == NULL) { return INFINITY; }
-    FILE* fp = fopen("ascii_frequencies.txt", "r");
+    FILE* fp = fopen("./etc/ascii_frequencies.txt", "r");
 
     double ascii_frequencies[256] = {0};
     size_t buffer_len = 32;

@@ -12,7 +12,7 @@ int main() {
 
     uint8_t* xor = multi_xor((uint8_t*)INPUT, (uint8_t*)KEY, input_size, key_size);
 
-    char* encrypted_hex = binary_to_hex(xor, input_size);
+    char* encrypted_hex = bin2hex(xor, input_size);
 
     // print results
     print_str("\nPlaintext:\n   ", INPUT);

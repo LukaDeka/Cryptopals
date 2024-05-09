@@ -10,7 +10,7 @@ int main() {
     // convert hex string to byte array
     size_t hex_len = strlen(INPUT);
     size_t plaintext_len = hex_len / 2;
-    uint8_t* byte_arr = hex_to_binary(INPUT, hex_len);
+    uint8_t* byte_arr = hex2bin(INPUT, hex_len);
 
     uint8_t* best_guess;
     uint8_t guess_key = crack_single_xor(byte_arr, plaintext_len, &best_guess);

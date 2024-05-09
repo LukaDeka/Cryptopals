@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 typedef struct {
     char* hex_str;
@@ -28,7 +27,7 @@ static inline void print_xor(char* message, uint8_t* string, size_t input_len) {
 
     printf(BOLDWHITE "%s" RESET, message);
 
-    for (int i = 0; i < input_len; i++) {
+    for (size_t i = 0; i < input_len; i++) {
         char ch = string[i];
         if (ch >= ' ' && ch <= '~') // ascii char in printable range
             printf("%c", string[i]);
@@ -57,13 +56,13 @@ static inline void print_score(char* message, double score) {
 void* xmalloc(size_t size);
 
 // converts hex string into byte array
-uint8_t* hex_to_binary(char* input, size_t input_len);
+uint8_t* hex2bin(char* input, size_t input_len);
 
-char* binary_to_hex(uint8_t* byte_arr, size_t byte_amount);
+char* bin2hex(uint8_t* byte_arr, size_t byte_amount);
 
-char* binary_to_base64(uint8_t* byte_arr, size_t byte_amount);
+char* bin2base64(uint8_t* byte_arr, size_t byte_amount);
 
-uint8_t* base64_to_binary(char* input, size_t input_len);
+uint8_t* base64_to_bin(char* input, size_t input_len);
 
 char* hex_to_base64(char* input, size_t input_len);
 

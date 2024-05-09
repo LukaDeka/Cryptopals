@@ -9,7 +9,7 @@
 
 // Challenge 4: Detect single-character XOR
 int main() {
-    FILE *file = fopen("challenge_04.txt", "r"); // also try "challenge_04_test.txt"
+    FILE *file = fopen("./etc/challenge_04.txt", "r"); // also try "challenge_04_test.txt"
 
     uint8_t best_guess[MAX_LEN + 1];
     uint8_t guess_key = ' ';
@@ -21,7 +21,7 @@ int main() {
         // convert newline-terminated line into null-terminated string
         char* curr_hex = NULL;
         size_t buffer_len = MAX_LEN + 1;
-        size_t chars_read = getline(&curr_hex, &buffer_len, file); // curr_hex is buffer
+        ssize_t chars_read = getline(&curr_hex, &buffer_len, file); // curr_hex is buffer
         if (chars_read > 0 && curr_hex[chars_read - 1] == '\n') {
             curr_hex[chars_read - 1] = '\0'; // replace '\n' with '\0'
         }
@@ -31,7 +31,7 @@ int main() {
             break; 
         }
 
-        uint8_t* byte_arr = hex_to_binary(curr_hex, chars_read - 1);
+        uint8_t* byte_arr = hex2bin(curr_hex, chars_read - 1);
         uint8_t *curr_guess = NULL;
         uint8_t curr_key = crack_single_xor(byte_arr, chars_read / 2, &curr_guess);
         double curr_score = score_plaintext(curr_guess, chars_read / 2);

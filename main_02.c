@@ -13,14 +13,14 @@ int main() {
     // convert hex to binary
     size_t hex_len = strlen(VALUE);
     size_t byte_amount = ceil(hex_len * 1.0f / 2);
-    uint8_t* byte_value = hex_to_binary(VALUE, strlen(VALUE));
-    uint8_t* byte_key   = hex_to_binary(KEY, strlen(KEY));
+    uint8_t* byte_value = hex2bin(VALUE, strlen(VALUE));
+    uint8_t* byte_key   = hex2bin(KEY, strlen(KEY));
 
     // xor the two binary arrays
     uint8_t* xor = multi_xor(byte_value, byte_key, byte_amount, byte_amount);
 
     // convert binary back to hex
-    char* converted_xor = binary_to_hex(xor, byte_amount);
+    char* converted_xor = bin2hex(xor, byte_amount);
 
     // print results
     print_str("\nValue:       ", VALUE);

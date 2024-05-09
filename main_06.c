@@ -12,7 +12,7 @@
 
 // challenge 6: Break repeating-key XOR
 int main() {
-    FILE* fp = fopen("challenge_06.txt", "r"); // also try "challenge_06_test.txt"
+    FILE* fp = fopen("./etc/challenge_06.txt", "r"); // also try "challenge_06_test.txt"
     
     fseek(fp, 0, SEEK_END);
     long file_size = ftell(fp);
@@ -29,7 +29,7 @@ int main() {
     base64_buffer[i] = '\0';
     fclose(fp);
 
-    uint8_t* ciphertext = base64_to_binary(base64_buffer, i);
+    uint8_t* ciphertext = base64_to_bin(base64_buffer, i);
     free(base64_buffer);
 
     size_t byte_amount = i * 3.0f / 4 - 1;
