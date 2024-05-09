@@ -1,7 +1,5 @@
 /bin
-/etc
-.vscode
-.cache
+.*/
 test.c
-main_07.c
-challenge_07.txt
+.main_07.c
+etc/challenge_07.txt

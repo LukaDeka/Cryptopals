@@ -1,0 +1,12 @@
+CC = clang
+CFLAGS = -gdwarf-4 -fsanitize=address -Wall -Wextra -O1
+ASAN = -fsanitize=address
+
+# compile each main.c file to object files
+: foreach main_*.c | functions.c |> $(CC) $(CFLAGS) $(ASAN) -c %f -o %o |> bin/%B.o
+
+# compile functions.c library file
+: functions.c |> $(CC) $(CFLAGS) $(ASAN) %f -c -o %o |> bin/%B.o
+
+# link each main.o file with functions.o
+: foreach bin/main_*.o | bin/functions.o |> clang bin/functions.o $(ASAN) %f -o %o |> bin/%B

@@ -19,4 +19,4 @@ main_06: main_06.c functions.c functions.h
 main_07: main_07.c functions.c functions.h
 	clang main_07.c functions.c -o bin/main_07 -Wall -lm -lcrypto
 
-# valgrind compilation flags: -O0 -v -gdwarf-4
+# valgrind compilation flags: -O1 -v -gdwarf-4
